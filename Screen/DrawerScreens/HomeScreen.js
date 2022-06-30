@@ -2,10 +2,39 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+      function getKind() {
+
+          fetch('https://api.binance.com/api/v3/ticker/price', {
+            method: 'get',
+            headers: {
+              //Header Defination
+              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            },
+          })
+          .then((response) => response.json())
+          .then((responseJson) => {
+            //Hide Loader
+            setLoading(false);
+            console.log(responseJson);
+            // If server response message same as Data Matched
+            
+          })
+          .catch((error) => {
+            //Hide Loader
+            setLoading(false);
+            console.error(error);
+          });
+         
+      }
+
+      getKind();
+  }, []);
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={{flex: 1, padding: 16}}>
