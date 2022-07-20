@@ -24,12 +24,12 @@ const HomeScreenStack = ({navigation}) => {
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          title: 'Home', //Set Header Title
+          title: '', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
           headerStyle: {
-            backgroundColor: '#307ecc', //Set Header color
+            backgroundColor: 'red', //Set Header color
           },
           headerTintColor: '#fff', //Set Header text color
           headerTitleStyle: {
@@ -50,7 +50,7 @@ const SettingScreenStack = ({navigation}) => {
           <NavigationDrawerHeader navigationProps={navigation} />
         ),
         headerStyle: {
-          backgroundColor: '#307ecc', //Set Header color
+          backgroundColor: 'red', //Set Header color
         },
         headerTintColor: '#fff', //Set Header text color
         headerTitleStyle: {
@@ -71,7 +71,7 @@ const SettingScreenStack = ({navigation}) => {
 const DrawerNavigatorRoutes = (props) => {
   return (
     <Drawer.Navigator
-      drawerContentOptions={{
+      screenOptions={{
         activeTintColor: '#cee1f2',
         color: '#cee1f2',
         itemStyle: {marginVertical: 5, color: 'white'},

@@ -3,30 +3,45 @@
 
 // Import React and Component
 import React, {useState, useEffect} from 'react';
-import {ActivityIndicator, View, StyleSheet, Image} from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Image } from 'react-native';
+import  AsyncStorage  from '@react-native-async-storage/async-storage';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
 
+  async function autologin() {
+      let token =  await AsyncStorage.getItem('token');
+      console.log("SplashScreen token")
+      console.log(token)
+      const response = await fetch('https://www.bearandbulls.com/api/autologin',{
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+              'authorization': 'Bearer '+ token,
+          }
+      });
+      const responseJson = await response.json();       
+      if (responseJson.status == 1) {          
+          navigation.replace('DrawerNavigationRoutes');
+      } else {
+        navigation.replace('Auth');
+      }
+  }
+
+
   useEffect(() => {
     setTimeout(() => {
       setAnimating(false);
-      //Check if user_id is set or not
-      //If not then send for Authentication
-      //else send to Home Screen
-      AsyncStorage.getItem('token').then((value) =>
-        navigation.replace(value === null ? 'Auth' : 'DrawerNavigationRoutes'),
-      );
+      autologin()      
     }, 5000);
   }, []);
 
   return (
     <View style={styles.container}>
       <Image
-        source={require('../Image/aboutreact.png')}
-        style={{width: '90%', resizeMode: 'contain', margin: 30}}
+        source={require('../Image/SplashScreen.png')}
+        style={{height: '100%',width: '100%', resizeMode: 'contain', margin: 30}}
       />
       <ActivityIndicator
         animating={animating}

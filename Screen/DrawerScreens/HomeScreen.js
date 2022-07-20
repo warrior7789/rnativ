@@ -3,77 +3,119 @@
 
 // Import React and Component
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView} from 'react-native';
+import {ActivityIndicator,View, Text, SafeAreaView,FlatList,StyleSheet,Image} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const HomeScreen = ({navigation}) => {
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-      function getKind() {
-
-          fetch('https://api.binance.com/api/v3/ticker/price', {
-            method: 'get',
+    const [animating, setAnimating] = useState(true);
+    const [imageUrl, setImageUrl] = useState(null)
+    const [loading, setLoading] = useState(false);
+    const [userdetails, setUserdetails] = useState([]);
+    const [avtar, setAvtar] = useState('https://i.imgur.com/fHyEMsl.jpg');
+     
+    async function getKind() {    
+        let token =  await AsyncStorage.getItem('token');
+        console.log("test")
+        console.log(token)
+        
+        const response = await fetch('https://www.bearandbulls.com/api/dashboard',{
+            method: 'GET',
             headers: {
-              //Header Defination
-              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-            },
-          })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            //Hide Loader
-            setLoading(false);
-            console.log(responseJson);
-            // If server response message same as Data Matched
-            
-          })
-          .catch((error) => {
-            //Hide Loader
-            setLoading(false);
-            console.error(error);
-          });
-         
-      }
+                'authorization': 'Bearer '+ token,
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            }
+        });
+        const responseJson = await response.json(); 
+        console.log(responseJson)
+        setUserdetails(responseJson.data);
+        setImageUrl(responseJson.data.user_details.avatar);
+        
+        console.log(userdetails)
+        
+               
+    }
+  
+  useEffect(() => {
+    setTimeout(() => {
+      setAnimating(false);
+      getKind(); 
+    }, 5000);
+       
 
-      getKind();
   }, []);
-  return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={{flex: 1, padding: 16}}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: 20,
-              textAlign: 'center',
-              marginBottom: 16,
-            }}>
-            Example of Splash, Login and Sign Up in React Native
-            {'\n\n'}
-            This is the Home Screen
-          </Text>
+  return (    
+    <View style={styles.container}> 
+        <View style={styles.topview} >
+            <View style={{ padding: 5, height: '20%',width: '30%'}} >            
+                { imageUrl &&  <Image style={styles.avtar}
+                      source={{
+                        uri: userdetails.user_details.avatar,
+                      }}
+                    />
+                } 
+            </View>
+            <View style={{padding: 5, width: '70%',alignSelf: 'flex-end'}} > 
+                {userdetails.user_details && <Text style={styles.baseText}>
+                      <Text style={styles.titleText} >
+                        {userdetails.user_details.refcode}
+                      </Text> 
+                      {"\n"}
+                      <Text style={styles.titleText} >
+                        {userdetails.user_details.name}
+                      </Text>                      
+                    </Text>
+                } 
+            </View>
+
+            
+
         </View>
-        <Text
-          style={{
-            fontSize: 18,
-            textAlign: 'center',
-            color: 'grey',
-          }}>
-          Splash, Login and Register Example{'\n'}React Native
-        </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            textAlign: 'center',
-            color: 'grey',
-          }}>
-          www.aboutreact.com
-        </Text>
-      </View>
-    </SafeAreaView>
+        <View style={{
+            width: '66%', height: '35%', backgroundColor: 'skyblue'
+        }} />
+        <View style={{
+            width: '33%', height: '50%', backgroundColor: 'steelblue'
+        }} />           
+        
+
+                 
+    
+    <ActivityIndicator
+      animating={animating}
+      color="#FFFFFF"
+      size="large"
+      style={styles.activityIndicator}
+    />
+    </View>
+    
   );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+
+    },
+    avtar: {
+        width: 100,
+        height: 100,
+        padding: 20,
+        borderRadius: 100,
+
+    },
+
+    titleText: {
+        fontSize: 12,
+        fontWeight: "bold"
+    },
+
+    topview:{
+        padding: 10,
+        height: '20%', 
+        width: '100%',
+        backgroundColor: '#e51b00cc'
+    }
+});
 
 export default HomeScreen;

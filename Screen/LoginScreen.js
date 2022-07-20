@@ -16,9 +16,9 @@ import {
   
 } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Loader from './Components/Loader';
+import  AsyncStorage  from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('');
@@ -28,6 +28,27 @@ const LoginScreen = ({navigation}) => {
 
   const passwordInputRef = createRef();
 
+    async function login(formBody) {
+        const response = await fetch('https://www.bearandbulls.com/api/login',{
+            method: 'POST',
+            body: formBody,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            }
+        });
+
+        const responseJson = await response.json();
+        console.log(responseJson.token)
+        setLoading(false);
+        if (responseJson.status == 1) {
+            await AsyncStorage.setItem('token', responseJson.token)
+            navigation.replace('DrawerNavigationRoutes');
+        } else {
+          setErrortext(responseJson.message);
+          console.log('Please check your email id or password');
+        }
+    }
+  
   const handleSubmitPress = () => {
     setErrortext('');
     if (!userEmail) {
@@ -48,34 +69,9 @@ const LoginScreen = ({navigation}) => {
     }
     formBody = formBody.join('&');
 
-    fetch('https://www.bearandbulls.com/api/login', {
-      method: 'POST',
-      body: formBody,
-      headers: {
-        //Header Defination
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        //Hide Loader
-        setLoading(false);
-        console.log(responseJson);
-        // If server response message same as Data Matched
-        if (responseJson.status == 1) {
-            AsyncStorage.setItem('token', responseJson.token);
-            //console.log(responseJson.data[0].user_id);
-            navigation.replace('DrawerNavigationRoutes');
-        } else {
-          setErrortext(responseJson.message);
-          console.log('Please check your email id or password');
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
-      });
+    login(formBody);
+
+    
   };
 
   return (
