@@ -34,14 +34,14 @@ const SplashScreen = ({navigation}) => {
     setTimeout(() => {
       setAnimating(false);
       autologin()      
-    }, 5000);
+    }, 3000);
   }, []);
 
   return (
     <View style={styles.container}>
       <Image
         source={require('../Image/SplashScreen.png')}
-        style={{height: '100%',width: '100%', resizeMode: 'contain', margin: 30}}
+        style={{height: '100%',width: '100%'}}
       />
       <ActivityIndicator
         animating={animating}
@@ -58,9 +58,7 @@ export default SplashScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#307ecc',
+
   },
   activityIndicator: {
     alignItems: 'center',
